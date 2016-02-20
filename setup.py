@@ -5,13 +5,13 @@ Mantis - A Minimalist Database Toolkit for Python
 """
 
 from setuptools import setup
-from mantis import __VERSION__
+from mantis import __version__
 from mantis import read_file
 
 
 setup(
     name = "mantis",
-    version = "1.0.0",
+    version = __version__,
     author = "Clivern",
     author_email = "hello@clivern.com",
     description="A Minimalist Database Toolkit for Python",
