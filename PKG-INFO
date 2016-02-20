@@ -1,0 +1,23 @@
+Metadata-Version: 1.1
+Name: Mantis
+Version: 1.0.0
+Author: Clivern
+Author-email: hello at clivern com
+Maintainer: Clivern
+Maintainer-email: hello at clivern com
+Home-page: https://github.com/Clivern/mantis
+Download-url: https://github.com/Clivern/mantis/archive/1.0.0.zip
+Summary: A Minimalist Database Toolkit for Python
+Keywords: orm,database,schema,builder
+Classifier: Development Status :: 3 - Alpha
+Classifier: Framework :: Flask
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.0
+Classifier: Programming Language :: Python :: 3.1
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks
+Classifier: Topic :: Utilities
