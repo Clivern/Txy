@@ -1,2 +1,2 @@
 # Mantis
-A minimalist database toolkit for python
+A Minimalist ORM for Python
