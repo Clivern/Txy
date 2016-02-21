@@ -334,6 +334,30 @@ class MySQLTableBuilder(object):
 			'null' : True
 		}))
 
+	def nullable(self, column_key):
+		"""Mark column as nullable"""
+		self._columns[column_key]['null'] = True
+		return column_key
+
+	def not_nullable(self, column_key):
+		"""Mark column as not nullable"""
+		self._columns[column_key]['null'] = False
+		return column_key
+
+	def auto_increment(self, column_key):
+		"""Mark column as auto incremented"""
+		self._columns[column_key]['auto_increment'] = True
+		return column_key
+
+	def index(self, column_key):
+		"""Mark column as index"""
+		self._columns[column_key]['index'] = True
+		return column_key
+
+	def default(self, column_key, default_value):
+		"""Add default value to the column"""
+		self._columns[column_key]['default'] = default_value
+		return column_key
 
 	def get(self):
 		"""Get Query from columns and commands"""
