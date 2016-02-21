@@ -1,191 +1,372 @@
+# -*- coding: utf-8 -*-
 """
-Mantis - A Minimalist ORM for Python
+    Mantis
+    ~~~~~~
 
-@author: Clivern U{hello@clivern.com}
+    A Minimalist ORM for Python
+
+    :copyright: (c) 2016 by Clivern (hello@clivern.com).
+    :license: MIT, see LICENSE for more details.
 """
+
 
 class SQLiteTableBuilder(object):
 	pass
 
-class MySQLTableBuilder(object):
 
+class MySQLTableBuilder(object):
+	"""MySQL Table Builder"""
+
+	# Table name
 	_table = None
+
+	# A list of columns to create
 	_columns = []
+
+	# A list of commands to execute
 	_commands = []
-	_engine = ""
-	_charset = ""
-	_collation = ""
+
+	# Default engine
+	_engine = "InnoDB"
+
+	# Default charset
+	_charset = "utf8"
+
+	# Default collation
+	_collation = "utf8_general_ci"
+
 
 	def set_engine(self, engine):
+		"""Set engine"""
 		self._engine = engine
 
 	def set_charset(self, charset):
+		"""Set charset"""
 		self._charset = charset
 
 	def set_collation(self, collation):
+		"""Set collation"""
 		self._collation = collation
 
-	def _add_command(self, command):
-		_commands.append(command)
-
-	def _add_column(self, column_name, parameters):
-		_columns.append({
-			'name' : column_name,
-			'parameters' : parameters
-		})
-
-	def create(self,table_name):
-		self._add_command({
-
+	def create(self, table_name):
+		"""Create a new table in database"""
+		return self._add_command({
+			'create_table' : table_name
 		})
 
 	def drop_table(self, table_name):
-		self._add_command({
-
+		"""Drop table from database"""
+		return self._add_command({
+			'drop_table' : table_name
 		})
 
 	def drop_table_if_exists(self, table_name):
-		self._add_command({
-
+		"""Drop table if exists from database"""
+		return self._add_command({
+			'drop_table_if_not_exists' : table_name
 		})
 
-	def rename_table(self, from, to):
-		self._add_command({
-
+	def rename_table(self, from_name, to_name):
+		"""Rename table"""
+		return self._add_command({
+			'rename_table' : {
+				'from_name' : from_name,
+				'to_name' : to_name
+			}
 		})
 
 	def has_table(self, table_name):
-		self._add_command({
-
+		"""Check if table exist in database"""
+		return self._add_command({
+			'has_table' : table_name
 		})
 
 	def has_column(self, table_name, column_name):
-		self._add_command({
-
+		"""Check if column exist in table"""
+		return self._add_command({
+			'has_column' : {
+				'table_name' : table_name,
+				'column_name' : column_name
+			}
 		})
 
-	def big_increments(self, column_name):
-		self._add_column(column_name, {
-			'Type' : 'Int',
+	def big_increments(self, column_name, lenght = 20):
+		"""Add big auto increments column"""
+		return self._add_column(column_name, {
+			'type' : 'INT',
+			'length' : lenght if( lenght <= 20 ) else 20,
+			'null' : False,
+			'auto_increment' : True
 		})
 
-	def increments(self, column_name):
-		self._add_column(column_name, {
-
+	def increments(self, column_name, lenght = 11):
+		"""Add auto increments column"""
+		return self._add_column(column_name, {
+			'type' : 'INT',
+			'length' : lenght if( lenght <= 11 ) else 11,
+			'null' : False,
+			'auto_increment' : True
 		})
 
-	def big_integer(self, column_name):
-		self._add_column(column_name, {
-
+	def big_integer(self, column_name, lenght = 20):
+		"""Add big integer column"""
+		return self._add_column(column_name, {
+			'type' : 'BIGINT',
+			'lenght' : lenght if( lenght <= 20 ) else 20,
+			'null' : False
 		})
 
-	def integer(self, column_name):
-		self._add_column(column_name, {
-
+	def integer(self, column_name, lenght = 11):
+		"""Add integer column"""
+		return self._add_column(column_name, {
+			'type' : 'INT',
+			'lenght' : lenght if( lenght <= 11 ) else 11,
+			'null' : False
 		})
 
-	def small_integer(self, column_name):
-		self._add_column(column_name, {
-
+	def medium_integer(self, column_name, lenght = 9):
+		"""Add medium integer column"""
+		return self._add_column(column_name, {
+			'type' : 'MEDIUMINT',
+			'lenght' : lenght if( lenght <= 9 ) else 9,
+			'null' : False
 		})
 
-	def tiny_integer(self, column_name):
-		self._add_column(column_name, {
-
+	def small_integer(self, column_name, lenght = 6):
+		"""Add small integer column"""
+		return self._add_column(column_name, {
+			'type' : 'SMALLINT',
+			'lenght' : lenght if( lenght <= 6 ) else 6,
+			'null' : False
 		})
 
-	def binary(self, column_name):
-		self._add_column(column_name, {
+	def tiny_integer(self, column_name, lenght = 4):
+		"""Add tiny integer column"""
+		return self._add_column(column_name, {
+			'type' : 'TINYINT',
+			'lenght' : lenght if( lenght <= 4 ) else 4,
+			'null' : False
+		})
 
+	def binary(self, column_name, column_length = 255):
+		"""Add binary column"""
+		return self._add_column(column_name, {
+			'type' : 'BINARY',
+			'lenght' : lenght if( lenght <= 255 ) else 255,
+			'null' : False
 		})
 
 	def boolean(self, column_name):
-		self._add_column(column_name, {
-
+		"""Add boolean column"""
+		return self._add_column(column_name, {
+			'type' : 'BOOLEAN',
+			'null' : False
 		})
 
 	def string(self, column_name, column_length = 250):
-		self._add_column(column_name, {
-
+		"""Add varchar column"""
+		return self._add_column(column_name, {
+			'type' : 'VARCHAR',
+			'lenght' : lenght if( lenght <= 250 ) else 250,
+			'null' : False
 		})
 
-	def char(self, column_name, column_length = 5):
-		self._add_column(column_name, {
-
+	def varchar(self, column_name, column_length = 250):
+		"""Add varchar column"""
+		return self._add_column(column_name, {
+			'type' : 'VARCHAR',
+			'lenght' : lenght if( lenght <= 250 ) else 250,
+			'null' : False
 		})
 
-	def date(self, column_name):
-		self._add_column(column_name, {
-
+	def char(self, column_name, column_length = 255):
+		"""Add char column"""
+		return self._add_column(column_name, {
+			'type' : 'CHAR',
+			'lenght' : lenght if( lenght <= 255 ) else 255,
+			'null' : False
 		})
 
-	def date_time(self, column_name):
-		self._add_column(column_name, {
-
+	def decimal(self, column_name, length, decimals):
+		"""Add decimal column"""
+		return self._add_column(column_name, {
+			'type' : 'DECIMAL',
+			'length' : length,
+			'decimals' : decimals,
+			'null' : False
 		})
 
-	def decimal(self, column_name, precision, scale):
-		self._add_column(column_name, {
-
-		})
-
-	def double(self, column_name, precision, scale):
-		self._add_column(column_name, {
-
+	def double(self, column_name, length, decimals):
+		"""Add double column"""
+		return self._add_column(column_name, {
+			'type' : 'DOUBLE',
+			'length' : length,
+			'decimals' : decimals,
+			'null' : False
 		})
 
 	def enum(self, column_name, choices=[]):
-		self._add_column(column_name, {
-
+		"""Add enum column"""
+		return self._add_column(column_name, {
+			'type' : 'ENUM',
+			'choices' : choices,
+			'null' : False
 		})
 
-	def float(self, column_name):
-		self._add_column(column_name, {
+	def float(self, column_name, length, decimals):
+		"""Add float column"""
+		return self._add_column(column_name, {
+			'type' : 'FLOAT',
+			'length' : length,
+			'decimals' : decimals,
+			'null' : False
+		})
 
+	def long_blob(self, column_name):
+		"""Add long blob column"""
+		return self._add_column(column_name, {
+			'type' : 'LONGBLOB',
+			'null' : False
+		})
+
+	def medium_blob(self, column_name):
+		"""Add medium blob column"""
+		return self._add_column(column_name, {
+			'type' : 'MEDIUMBLOB',
+			'null' : False
+		})
+
+	def tiny_blob(self, column_name):
+		"""Add tiny blob column"""
+		return self._add_column(column_name, {
+			'type' : 'TINYBLOB',
+			'null' : False
+		})
+
+	def blob(self, column_name):
+		"""Add blob column"""
+		return self._add_column(column_name, {
+			'type' : 'BLOB',
+			'null' : False
 		})
 
 	def long_text(self, column_name):
-		self._add_column(column_name, {
-
-		})
-
-	def medium_integer(self, column_name):
-		self._add_column(column_name, {
-
+		"""Add long text column"""
+		return self._add_column(column_name, {
+			'type' : 'LONGTEXT',
+			'null' : False
 		})
 
 	def medium_text(self, column_name):
-		self._add_column(column_name, {
+		"""Add medium text column"""
+		return self._add_column(column_name, {
+			'type' : 'MEDIUMTEXT',
+			'null' : False
+		})
 
+	def tiny_text(self, column_name):
+		"""Add tiny text column"""
+		return self._add_column(column_name, {
+			'type' : 'TINYTEXT',
+			'null' : False
 		})
 
 	def text(self, column_name):
-		self._add_column(column_name, {
-
+		"""Add text column"""
+		return self._add_column(column_name, {
+			'type' : 'TEXT',
+			'null' : False
 		})
 
 	def time(self, column_name):
-		self._add_column(column_name, {
+		"""Add time column"""
+		return self._add_column(column_name, {
+			'type' : 'TIME',
+			'null' : False
+		})
 
+	def year(self, column_name, length = 4):
+		"""Add year column"""
+		return self._add_column(column_name, {
+			'type' : 'YEAR',
+			'length' : lenght if( (lenght == 4) or (lenght == 2) ) else 4,
+			'null' : False
+		})
+
+	def datetime(self, column_name):
+		"""Add datetime column"""
+		return self._add_column(column_name, {
+			'type' : 'DATETIME',
+			'null' : False
+		})
+
+	def date(self, column_name):
+		"""Add date column"""
+		return self._add_column(column_name, {
+			'type' : 'DATE',
+			'null' : False
 		})
 
 	def timestamp(self, column_name):
-		self._add_column(column_name, {
-
+		"""Add timestamp column"""
+		return self._add_column(column_name, {
+			'type' : 'TIMESTAMP',
+			'null' : False
 		})
 
 	def timestamps():
-		self._add_column(column_name, {
-
-		})
+		"""Add 'created_at' and 'updated_at' timestamps columns"""
+		return (self._add_column('created_at', {
+			'type' : 'TIMESTAMP',
+			'null' : False
+		}), self._add_column('updated_at', {
+			'type' : 'TIMESTAMP',
+			'null' : False
+		}))
 
 	def nullable_timestamps():
-		self._add_column(column_name, {
+		"""Add nullable 'created_at' and 'updated_at' timestamps columns"""
+		return (self._add_column('created_at', {
+			'type' : 'TIMESTAMP',
+			'null' : True
+		}), self._add_column('updated_at', {
+			'type' : 'TIMESTAMP',
+			'null' : True
+		}))
 
-		})
 
-	def get_query(self):
+	def get(self):
+		"""Get Query from columns and commands"""
 		pass
 
 	def reset(self):
+		""" Reset columns and commands"""
+		self._table = None
+		self._columns = []
+		self._commands = []
+		self._engine = "InnoDB"
+		self._charset = ""
+		self._collation = "utf8_general_ci"
 		return self
+
+	def _add_command(self, command):
+		"""Add commands storage"""
+		self._commands.append(command)
+		return len(self._commands) - 1
+
+	def _add_column(self, column_name, parameters):
+		"""Add columns storage"""
+		self._columns.append({
+			'column_name' : column_name,
+			'parameters' : parameters
+		})
+		return len(self._columns) - 1
+
+	def _translate(self):
+		""" Translate columns and commands to Query"""
+		print(self._table)
+		print(self._columns)
+		print(self._commands)
+		print(self._engine)
+		print(self._charset)
+		print(self._collation)
