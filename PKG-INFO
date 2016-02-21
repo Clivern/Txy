@@ -7,7 +7,7 @@ Maintainer: Clivern
 Maintainer-email: hello at clivern com
 Home-page: https://github.com/Clivern/mantis
 Download-url: https://github.com/Clivern/mantis/archive/1.0.0.zip
-Summary: A Minimalist Database Toolkit for Python
+Summary: A Minimalist ORM for Python
 Keywords: orm,database,schema,builder
 Classifier: Development Status :: 3 - Alpha
 Classifier: Framework :: Flask

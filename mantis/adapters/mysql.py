@@ -1,5 +1,5 @@
 """
-Mantis - A Minimalist Database Toolkit for Python
+Mantis - A Minimalist ORM for Python
 
 @author: Clivern U{hello@clivern.com}
 """

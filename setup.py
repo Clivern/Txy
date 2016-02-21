@@ -1,5 +1,5 @@
 """
-Mantis - A Minimalist Database Toolkit for Python
+Mantis - A Minimalist ORM for Python
 
 @author: Clivern U{hello@clivern.com}
 """
@@ -14,7 +14,7 @@ setup(
     version = __version__,
     author = "Clivern",
     author_email = "hello@clivern.com",
-    description="A Minimalist Database Toolkit for Python",
+    description="A Minimalist ORM for Python",
     license = "MIT",
     keywords = "orm,database,schema,builder",
     url = "http://clivern.github.io/mantis/",
