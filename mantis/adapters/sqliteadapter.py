@@ -10,8 +10,8 @@
 """
 import sqlite3
 
-class SQLite(object):
-
+class SQLiteAdapter(object):
+	"""SQLite Adapter"""
 	_configs = {}
 	_conn = False
 	_cursor = False

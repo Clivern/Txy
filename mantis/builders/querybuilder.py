@@ -10,7 +10,13 @@
 """
 
 class SQLiteQueryBuilder(object):
+	"""SQLite Query Builder"""
 	pass
 
 class MySQLQueryBuilder(object):
+	"""MySQL Query Builder"""
+	pass
+
+class PostgreSQLQueryBuilder(object):
+	"""PostgreSQL Query Builder"""
 	pass

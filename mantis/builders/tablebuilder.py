@@ -11,8 +11,8 @@
 
 
 class SQLiteTableBuilder(object):
+	"""SQLite Table Builder"""
 	pass
-
 
 class MySQLTableBuilder(object):
 	"""MySQL Table Builder"""
@@ -621,3 +621,7 @@ class MySQLTableBuilder(object):
 			'type' : 'create_table_if_not_exists',
 			'table_name' : table_name
 		})
+
+class PostgreSQLTableBuilder(object):
+	"""PostgreSQL Table Builder"""
+	pass
