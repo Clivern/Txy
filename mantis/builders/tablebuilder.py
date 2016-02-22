@@ -14,6 +14,7 @@ class SQLiteTableBuilder(object):
 	"""SQLite Table Builder"""
 	pass
 
+
 class MySQLTableBuilder(object):
 	"""MySQL Table Builder"""
 
@@ -37,6 +38,9 @@ class MySQLTableBuilder(object):
 
 	# End Query to run
 	_query = ""
+
+	# Temp return values used to support chaining
+	_temp = None
 
 	# Query logger
 	_logger = None
@@ -62,400 +66,461 @@ class MySQLTableBuilder(object):
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add command
-		return self._add_command({
+		self._add_command({
 			'type' : 'create_table',
 			'table_name' : table_name
 		})
+		return self
 
 	def create_table_if_not_exists(self, table_name):
 		"""Create a new table in database"""
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add command
-		return self._add_command({
+		self._add_command({
 			'type' : 'create_table_if_not_exists',
 			'table_name' : table_name
 		})
+		return self
 
 	def alter_table(self, table_name):
 		"""Alter table in database"""
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add command
-		return self._add_command({
+		self._add_command({
 			'type' : 'alter_table',
 			'table_name' : table_name
 		})
+		return self
 
 	def drop_table(self, table_name):
 		"""Drop table from database"""
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add Command
-		return self._add_command({
+		self._add_command({
 			'type' : 'drop_table',
 			'table_name' : table_name
 		})
+		return self
 
 	def drop_table_if_exists(self, table_name):
 		"""Drop table if exists from database"""
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add Command
-		return self._add_command({
+		self._add_command({
 			'type' : 'drop_table_if_exists',
 			'table_name' : table_name
 		})
+		return self
 
 	def rename_table(self, from_name, to_name):
 		"""Rename table"""
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add Command
-		return self._add_command({
+		self._add_command({
 			'type' : 'rename_table',
 			'from_table_name' : from_name,
 			'to_table_name' : to_name
 		})
+		return self
 
 	def has_table(self, table_name):
 		"""Check if table exist in database"""
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add Command
-		return self._add_command({
+		self._add_command({
 			'type' : 'has_table',
 			'table_name' : table_name
 		})
+		return self
 
 	def has_column(self, table_name, column_name):
 		"""Check if column exist in table"""
 		# Reset table, columns and commands
 		self.reset(['table', 'columns', 'commands', 'query'])
 		# Add Command
-		return self._add_command({
+		self._add_command({
 			'type' : 'has_column',
 			'table_name' : table_name,
 			'column_name' : column_name
 		})
+		return self
 
 	def big_increments(self, column_name, length = 20):
 		"""Add big auto increments column"""
 		length = length if( length <= 20 ) else 20
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'INT(%s)' % (length),
 			'length' : length,
 			'null' : False,
 			'auto_increment' : True
-		})
+		})]
+		return self
 
 	def increments(self, column_name, length = 11):
 		"""Add auto increments column"""
 		length = length if( length <= 11 ) else 11
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'INT(%s)' % (length),
 			'length' : length,
 			'null' : False,
 			'auto_increment' : True
-		})
+		})]
+		return self
 
 	def big_integer(self, column_name, length = 20):
 		"""Add big integer column"""
 		length = length if( length <= 20 ) else 20
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'BIGINT(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def integer(self, column_name, length = 11):
 		"""Add integer column"""
 		length = length if( length <= 11 ) else 11
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'INT(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def medium_integer(self, column_name, length = 9):
 		"""Add medium integer column"""
 		length = length if( length <= 9 ) else 9
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'MEDIUMINT(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def small_integer(self, column_name, length = 6):
 		"""Add small integer column"""
 		length = length if( length <= 6 ) else 6
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'SMALLINT(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def tiny_integer(self, column_name, length = 4):
 		"""Add tiny integer column"""
 		length = length if( length <= 4 ) else 4
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'TINYINT(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def binary(self, column_name, column_length = 255):
 		"""Add binary column"""
 		length = length if( length <= 255 ) else 255
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'BINARY(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def boolean(self, column_name):
 		"""Add boolean column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'BOOLEAN',
 			'null' : False
-		})
+		})]
+		return self
 
 	def string(self, column_name, column_length = 250):
 		"""Add varchar column"""
 		length = length if( length <= 250 ) else 250
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'VARCHAR(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def varchar(self, column_name, column_length = 250):
 		"""Add varchar column"""
 		length = length if( length <= 250 ) else 250
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'VARCHAR(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def char(self, column_name, column_length = 255):
 		"""Add char column"""
 		length = length if( length <= 255 ) else 255
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'CHAR(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def decimal(self, column_name, length, decimals):
 		"""Add decimal column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'DECIMAL(%s,%s)' % (length, decimals),
 			'length' : length,
 			'decimals' : decimals,
 			'null' : False
-		})
+		})]
+		return self
 
 	def double(self, column_name, length, decimals):
 		"""Add double column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'DOUBLE(%s,%s)' % (length, decimals),
 			'length' : length,
 			'decimals' : decimals,
 			'null' : False
-		})
+		})]
+		return self
 
 	def enum(self, column_name, choices=[]):
 		"""Add enum column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : "ENUM('%s')" %  "','".join(choices),
 			'choices' : choices,
 			'null' : False
-		})
+		})]
+		return self
 
 	def float(self, column_name, length, decimals):
 		"""Add float column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'FLOAT(%s,%s)' % (length, decimals),
 			'length' : length,
 			'decimals' : decimals,
 			'null' : False
-		})
+		})]
+		return self
 
 	def long_blob(self, column_name):
 		"""Add long blob column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'LONGBLOB',
 			'null' : False
-		})
+		})]
+		return self
 
 	def medium_blob(self, column_name):
 		"""Add medium blob column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'MEDIUMBLOB',
 			'null' : False
-		})
+		})]
+		return self
 
 	def tiny_blob(self, column_name):
 		"""Add tiny blob column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'TINYBLOB',
 			'null' : False
-		})
+		})]
+		return self
 
 	def blob(self, column_name):
 		"""Add blob column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'BLOB',
 			'null' : False
-		})
+		})]
+		return self
 
 	def long_text(self, column_name):
 		"""Add long text column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'LONGTEXT',
 			'null' : False
-		})
+		})]
+		return self
 
 	def medium_text(self, column_name):
 		"""Add medium text column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'MEDIUMTEXT',
 			'null' : False
-		})
+		})]
+		return self
 
 	def tiny_text(self, column_name):
 		"""Add tiny text column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'TINYTEXT',
 			'null' : False
-		})
+		})]
+		return self
 
 	def text(self, column_name):
 		"""Add text column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'TEXT',
 			'null' : False
-		})
+		})]
+		return self
 
 	def time(self, column_name):
 		"""Add time column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'TIME',
 			'null' : False
-		})
+		})]
+		return self
 
 	def year(self, column_name, length = 4):
 		"""Add year column"""
 		length = length if( (length == 4) or (length == 2) ) else 4
 
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'YEAR(%s)' % (length),
 			'length' : length,
 			'null' : False
-		})
+		})]
+		return self
 
 	def datetime(self, column_name):
 		"""Add datetime column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'DATETIME',
 			'null' : False
-		})
+		})]
+		return self
 
 	def date(self, column_name):
 		"""Add date column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'DATE',
 			'null' : False
-		})
+		})]
+		return self
 
 	def timestamp(self, column_name):
 		"""Add timestamp column"""
-		return self._add_column(column_name, {
+		self._temp = [self._add_column(column_name, {
 			'type' : 'TIMESTAMP',
 			'null' : False
-		})
+		})]
+		return self
 
-	def timestamps():
+	def timestamps(self):
 		"""Add 'created_at' and 'updated_at' timestamps columns"""
-		return (self._add_column('created_at', {
+		self._temp = [self._add_column('created_at', {
 			'type' : 'TIMESTAMP',
 			'null' : False
 		}), self._add_column('updated_at', {
 			'type' : 'TIMESTAMP',
 			'null' : False
-		}))
+		})]
+		return self
 
-	def nullable_timestamps():
+	def nullable_timestamps(self):
 		"""Add nullable 'created_at' and 'updated_at' timestamps columns"""
-		return (self._add_column('created_at', {
+		self._temp = [self._add_column('created_at', {
 			'type' : 'TIMESTAMP',
 			'null' : True
 		}), self._add_column('updated_at', {
 			'type' : 'TIMESTAMP',
 			'null' : True
-		}))
+		})]
+		return self
 
-	def nullable(self, column_key):
+	def nullable(self):
 		"""Mark column as nullable"""
-		self._columns[column_key]['null'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['null'] = True
+		return self
 
-	def not_nullable(self, column_key):
+	def not_nullable(self):
 		"""Mark column as not nullable"""
-		self._columns[column_key]['null'] = False
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['null'] = False
+		return self
 
-	def auto_increment(self, column_key):
+	def null(self):
+		"""Mark column as nullable"""
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['null'] = True
+		return self
+
+	def not_null(self):
+		"""Mark column as not nullable"""
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['null'] = False
+		return self
+
+	def auto_increment(self):
 		"""Mark column as auto incremented"""
-		self._columns[column_key]['auto_increment'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['auto_increment'] = True
+		return self
 
-	def primary(self, column_key):
+	def primary(self):
 		"""Mark column as index"""
-		self._columns[column_key]['primary'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['primary'] = True
+		return self
 
-	def index(self, column_key):
+	def index(self):
 		"""Mark column as index"""
-		self._columns[column_key]['index'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['index'] = True
+		return self
 
-	def key(self, column_key):
+	def key(self):
 		"""Mark column as index"""
-		self._columns[column_key]['index'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['index'] = True
+		return self
 
-	def default(self, column_key, default_value):
+	def default(self, default_value):
 		"""Add default value to the column"""
-		self._columns[column_key]['default'] = default_value
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['default'] = default_value
+		return self
 
-	def add(self, column_key):
+	def add(self):
 		"""Add a new column"""
-		self._columns[column_key]['add'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['add'] = True
+		return self
 
-	def modify(self, column_key):
+	def modify(self):
 		"""Modify column"""
-		self._columns[column_key]['modify'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['modify'] = True
+		return self
 
-	def drop(self, column_key):
+	def drop(self):
 		"""Drop column"""
-		self._columns[column_key]['drop'] = True
-		return column_key
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['drop'] = True
+		return self
 
 	def get(self):
 		"""Get Query from columns and commands"""
@@ -528,15 +593,15 @@ class MySQLTableBuilder(object):
 		for command in self._commands:
 
 			# Check if command is create table
-			if command.type == 'create_table':
+			if command['type'] == 'create_table':
 				return self._translate_create_table(command)
 
 			# Check if command is alter table
-			elif command.type == 'alter_table':
+			elif command['type'] == 'alter_table':
 				return self._translate_alter_table(command)
 
 			# Check if logger is availabe
-			if self._logger !== None:
+			if self._logger != None:
 				self._logger.log(self._query)
 
 			return True
@@ -573,7 +638,7 @@ class MySQLTableBuilder(object):
 				return False
 
 		# Check if logger is availabe
-		if self._logger !== None:
+		if self._logger != None:
 			self._logger.log(self._query)
 
 		return True
@@ -582,15 +647,15 @@ class MySQLTableBuilder(object):
 		"""Translate create table command"""
 
 		# Build create table command
-		if (command.type == 'create_table') and (command.table_name !== ''):
-			self._query = 'CREATE TABLE `%s` (' % (command.table_name)
+		if (command['type'] == 'create_table') and (command['table_name'] != ''):
+			self._query = 'CREATE TABLE `%s` (\n    ' % (command['table_name'])
 
 		# Build create table if not exists command
-		elif (command.type == 'create_table_if_not_exists') and (command.table_name !== ''):
-			self._query = 'CREATE TABLE IF NOT EXISTS `%s` (' % (command.table_name)
+		elif (command['type'] == 'create_table_if_not_exists') and (command['table_name'] != ''):
+			self._query = 'CREATE TABLE IF NOT EXISTS `%s` (\n    ' % (command['table_name'])
 
 		# Invalid result reached
-		else
+		else:
 			return False
 
 		# Internal data
@@ -608,71 +673,74 @@ class MySQLTableBuilder(object):
 			auto_increment_indicator = ""
 
 			# Check if column not null or null
-			if ('null' in column['column_name']) and (column['column_name']['null'] == False):
+			if ('null' in column['parameters']) and (column['parameters']['null'] == False):
 				attrs += " NOT NULL"
 			else:
 				attrs += " NULL"
 
 			# Check for auto increment
-			if ('auto_increment' in column['column_name']) and (column['column_name']['auto_increment'] == True):
+			if ('auto_increment' in column['parameters']) and (column['parameters']['auto_increment'] == True):
 				attrs += " AUTO_INCREMENT"
 				auto_increment_indicator = " AUTO_INCREMENT=1"
 
 			# Check for default value
-			if ('default' in column['column_name']) and (column['column_name']['default'] !== ""):
-				attrs += " DEFAULT '%s'" % (column['column_name']['default'])
+			if ('default' in column['parameters']) and (column['parameters']['default'] != ""):
+				attrs += " DEFAULT '%s'" % (column['parameters']['default'])
 
 			# Append column end command
-			nice_column.append("`%s` %s%s" % (column['column_name'], column['column_name']['type'], attrs))
+			nice_column.append("`%s` %s%s" % (column['column_name'], column['parameters']['type'], attrs))
 
 			# Check if column in primary key
-			if ('primary' in column['column_name']) and (column['column_name']['primary'] == True):
+			if ('primary' in column['parameters']) and (column['parameters']['primary'] == True):
 				nice_commands.append("PRIMARY KEY (`%s`)" % (column['column_name']))
 
 			# Check if column is index
-			if ('index' in column['column_name']) and (column['column_name']['index'] == True):
+			if ('index' in column['parameters']) and (column['parameters']['index'] == True):
 				nice_commands.append("KEY `%s` (`%s`)" % (column['column_name']))
 
-			# Concatenate all commands
-			all_commands = nice_column + nice_commands
 
-			# check if commands empty
-			if len(all_commands) <= 0:
-				return False
+		# Concatenate all commands
+		all_commands = nice_column + nice_commands
 
-			# append commands to the final query
-			self._query += ",".join(all_commands)
+		# check if commands empty
+		if len(all_commands) <= 0:
+			return False
+
+		# append commands to the final query
+		self._query += ",\n    ".join(all_commands)
 
 		# Set engine and charset
-		if ((command.type == 'create_table_if_not_exists') or (command.type == 'create_table')) and (command.table_name !== ''):
-			self._query += ') ENGINE=%s DEFAULT CHARSET=%s%s;";' % (self._engine, self._charset, auto_increment_indicator)
+		if ((command['type'] == 'create_table_if_not_exists') or (command['type'] == 'create_table')) and (command['table_name'] != ''):
+			self._query += '\n) ENGINE=%s DEFAULT CHARSET=%s%s;";' % (self._engine, self._charset, auto_increment_indicator)
 
 		# Invalid result reached
-		else
+		else:
 			return False
 
 	def _translate_alter_table(self, command):
 		"""Translate alter table command"""
 
 		# Build Alter table command
-		if (command.type == 'alter_table') and (command.table_name !== ''):
-			self._query = 'ALTER TABLE %s' % (command.table_name)
+		if (command['type'] == 'alter_table') and (command['table_name'] != ''):
+			self._query = 'ALTER TABLE %s\n' % (command['table_name'])
 
 		# Loop through columns
+		nice_column = []
+
 		for column in self._columns:
 			attrs = ""
 			action_type = "ADD"
 
 			# Check if action is add
-			if ('add' in column['column_name']) and (column['column_name']['add'] == True):
+			if ('add' in column['parameters']) and (column['parameters']['add'] == True):
 				action_type = "ADD"
 
 			# Check if action is modify
-			elif ('modify' in column['column_name']) and (column['column_name']['modify'] == True):
+			elif ('modify' in column['parameters']) and (column['parameters']['modify'] == True):
 				action_type = "MODIFY"
 
 			# Check if action is drop
-			elif ('drop' in column['column_name']) and (column['column_name']['drop'] == True):
+			elif ('drop' in column['parameters']) and (column['parameters']['drop'] == True):
 				action_type = "DROP"
 
 			# Set default
@@ -680,25 +748,67 @@ class MySQLTableBuilder(object):
 				action_type = "ADD"
 
 			# Check if column not null or null
-			if ('null' in column['column_name']) and (column['column_name']['null'] == False) and (action_type !== 'DROP'):
+			if ('null' in column['parameters']) and (column['parameters']['null'] == False) and (action_type != 'DROP'):
 				attrs += " NOT NULL"
-			elif (action_type !== 'DROP'):
+			elif (action_type != 'DROP'):
 				attrs += " NULL"
 
 			# Check for auto increment
-			if ('auto_increment' in column['column_name']) and (column['column_name']['auto_increment'] == True) and (action_type !== 'DROP'):
+			if ('auto_increment' in column['parameters']) and (column['parameters']['auto_increment'] == True) and (action_type != 'DROP'):
 				attrs += " AUTO_INCREMENT"
 
 			# Check for default value
-			if ('default' in column['column_name']) and (column['column_name']['default'] !== "") and (action_type !== 'DROP'):
-				attrs += " DEFAULT '%s'" % (column['column_name']['default'])
+			if ('default' in column['parameters']) and (column['parameters']['default'] != "") and (action_type != 'DROP'):
+				attrs += " DEFAULT '%s'" % (column['parameters']['default'])
 
 			# Append column end command
-			nice_column.append("%s %s %s%s" % (action_type, column['column_name'], column['column_name']['type'], attrs))
+			nice_column.append('%s %s %s%s' % (action_type, column['column_name'], column['parameters']['type'], attrs))
 
-			# append commands to the final query
-			self._query += "\n".join(nice_column)
+		# append commands to the final query
+		self._query += "\n".join(nice_column)
+
 
 class PostgreSQLTableBuilder(object):
 	"""PostgreSQL Table Builder"""
 	pass
+
+
+if __name__ == '__main__':
+
+	builder = MySQLTableBuilder()
+
+	print(builder.drop_table('timber_files')
+				 .get()) #: DROP TABLE `timber_files`
+
+	print(builder.drop_table_if_exists('timber_files')
+			 	 .get()) #: DROP TABLE IF EXISTS `timber_files`
+
+	print(builder.rename_table('timber_files', 'new_timber_files')
+				 .get()) #: RENAME TABLE timber_files TO new_timber_files
+
+	print(builder.has_table('timber_files')
+				 .get()) #: SHOW TABLES LIKE 'timber_files'
+
+	print(builder.has_column('timber_files', 'fi_id')
+				 .get()) #: SHOW COLUMNS FROM `timber_files` LIKE 'fi_id'
+
+
+	#: ALTER TABLE timber_files
+	#: ADD votes1 BIGINT(20) NULL DEFAULT 'test'
+	#: MODIFY votes2 BIGINT(20) NOT NULL
+	#: DROP votes3 BIGINT(20)
+	print(builder.alter_table('timber_files')
+				 .big_integer('votes1').nullable().default("test").add()
+				 .big_integer('votes2').modify()
+				 .big_integer('votes3').drop()
+				 .get())
+
+	#: CREATE TABLE `timber_files` (
+	#:     `fi_id` INT(20) NOT NULL AUTO_INCREMENT,
+	#:     `created_at` TIMESTAMP NOT NULL,
+	#:     `updated_at` TIMESTAMP NOT NULL
+	#: ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+	print(builder.create_table('timber_files')
+				 .big_increments('fi_id')
+				 .timestamps()
+				 .get())
