@@ -39,10 +39,7 @@ class MySQLTableBuilder(object):
 	_query = ""
 
 	# Query logger
-	_logger = {
-		'status' : False,
-		'file' : None
-	}
+	_logger = None
 
 	def set_engine(self, engine):
 		"""Set engine"""
@@ -55,6 +52,10 @@ class MySQLTableBuilder(object):
 	def set_collation(self, collation):
 		"""Set collation"""
 		self._collation = collation
+
+	def set_logger(self, logger):
+		"""Set logger"""
+		self._logger = logger
 
 	def create(self, table_name):
 		"""Create a new table in database"""
