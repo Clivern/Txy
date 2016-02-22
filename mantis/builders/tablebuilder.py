@@ -77,6 +77,16 @@ class MySQLTableBuilder(object):
 			'table_name' : table_name
 		})
 
+	def alter_table(self, table_name):
+		"""Alter table in database"""
+		# Reset table, columns and commands
+		self.reset(['table', 'columns', 'commands', 'query'])
+		# Add command
+		return self._add_command({
+			'type' : 'alter_table',
+			'table_name' : table_name
+		})
+
 	def drop_table(self, table_name):
 		"""Drop table from database"""
 		# Reset table, columns and commands
@@ -432,6 +442,21 @@ class MySQLTableBuilder(object):
 		self._columns[column_key]['default'] = default_value
 		return column_key
 
+	def add(self, column_key):
+		"""Add a new column"""
+		self._columns[column_key]['add'] = True
+		return column_key
+
+	def modify(self, column_key):
+		"""Modify column"""
+		self._columns[column_key]['modify'] = True
+		return column_key
+
+	def drop(self, column_key):
+		"""Drop column"""
+		self._columns[column_key]['drop'] = True
+		return column_key
+
 	def get(self):
 		"""Get Query from columns and commands"""
 		self._translate()
@@ -469,6 +494,8 @@ class MySQLTableBuilder(object):
 
 		return self
 
+
+
 	def _add_command(self, command):
 		"""Add commands storage"""
 		self._commands.append(command)
@@ -496,86 +523,23 @@ class MySQLTableBuilder(object):
 		else:
 			return False
 
-
 	def _translate_columns(self):
 		"""Translate table creation command"""
 		for command in self._commands:
 
-			# Build create table command
-			if (command.type == 'create_table') and (command.table_name !== ''):
-				self._query = 'CREATE TABLE `%s` (' % (command.table_name)
+			# Check if command is create table
+			if command.type == 'create_table':
+				return self._translate_create_table(command)
 
-			# Build create table if not exists command
-			elif (command.type == 'create_table_if_not_exists') and (command.table_name !== ''):
-				self._query = 'CREATE TABLE IF NOT EXISTS `%s` (' % (command.table_name)
-
-			# Invalid result reached
-			else
-				return False
-
-			# Internal data
-			nice_column = []
-			nice_commands = []
-			auto_increment_indicator = ""
-
-			# Check if no columns set
-			if len(self._columns) <= 0:
-				return False
-
-			# Loop through columns
-			for column in self._columns:
-				attrs = ""
-
-				# Check if column not null or null
-				if 'null' in column['column_name'] and column['column_name']['null'] == False:
-					attrs += " NOT NULL"
-				else:
-					attrs += " NULL"
-
-				# Check for auto increment
-				if 'auto_increment' in column['column_name'] and column['column_name']['auto_increment'] == True:
-					attrs += " AUTO_INCREMENT"
-					auto_increment_indicator = " AUTO_INCREMENT=1"
-
-				# Check for default value
-				if 'default' in column['column_name'] and column['column_name']['default'] !== "":
-					attrs += " DEFAULT '%s'" % (column['column_name']['default'])
-
-				# Append column end command
-				nice_column.append("`%s` %s%s" % (column['column_name'], column['column_name']['type'], attrs))
-
-				# Check if column in primary key
-				if 'primary' in column['column_name'] and column['column_name']['primary'] == True:
-					nice_commands.append("PRIMARY KEY (`%s`)" % (column['column_name']))
-
-				# Check if column is index
-				if 'index' in column['column_name'] and column['column_name']['index'] == True:
-					nice_commands.append("KEY `%s` (`%s`)" % (column['column_name']))
-
-				# Concatenate all commands
-				all_commands = nice_column + nice_commands
-
-				# check if commands empty
-				if len(all_commands) <= 0:
-					return False
-
-				# append commands to the final query
-				self._query += ",".join(all_commands)
-
-			# Set engine and charset
-			if ((command.type == 'create_table_if_not_exists') or (command.type == 'create_table')) and (command.table_name !== ''):
-				self._query += ') ENGINE=%s DEFAULT CHARSET=%s%s;";' % (self._engine, self._charset, auto_increment_indicator)
-
-			# Invalid result reached
-			else
-				return False
+			# Check if command is alter table
+			elif command.type == 'alter_table':
+				return self._translate_alter_table(command)
 
 			# Check if logger is availabe
 			if self._logger !== None:
 				self._logger.log(self._query)
 
 			return True
-
 
 	def _translate_commands(self):
 		"""Translate custom commands"""
@@ -592,9 +556,21 @@ class MySQLTableBuilder(object):
 			elif command['type'] == 'drop_table':
 				self._query += "DROP TABLE `%s`" % (command['table_name'])
 
-		# Check if query is empty so invalid result reached
-		if self._query == "":
-			return False
+			# Check if `rename table` command
+			elif command['type'] == 'rename_table':
+				self._query += "RENAME TABLE %s TO %s" % (command['from_table_name'], command['to_table_name'])
+
+			# Check if `has column` command
+			elif command['type'] == 'has_column':
+				self._query += "SHOW COLUMNS FROM `%s` LIKE '%s'" % (command['table_name'], command['column_name'])
+
+			# Check if `has table` command
+			elif command['type'] == 'has_table':
+				self._query += "SHOW TABLES LIKE '%s'" % (command['table_name'])
+
+			# Invalid result reached
+			else:
+				return False
 
 		# Check if logger is availabe
 		if self._logger !== None:
@@ -602,25 +578,126 @@ class MySQLTableBuilder(object):
 
 		return True
 
-	def create_table(self, table_name):
-		"""Create a new table in database"""
-		# Reset table, columns and commands
-		self.reset(['table', 'columns', 'commands', 'query'])
-		# Add command
-		return self._add_command({
-			'type' : 'create_table',
-			'table_name' : table_name
-		})
+	def _translate_create_table(self, command):
+		"""Translate create table command"""
 
-	def create_table_if_not_exists(self, table_name):
-		"""Create a new table in database"""
-		# Reset table, columns and commands
-		self.reset(['table', 'columns', 'commands', 'query'])
-		# Add command
-		return self._add_command({
-			'type' : 'create_table_if_not_exists',
-			'table_name' : table_name
-		})
+		# Build create table command
+		if (command.type == 'create_table') and (command.table_name !== ''):
+			self._query = 'CREATE TABLE `%s` (' % (command.table_name)
+
+		# Build create table if not exists command
+		elif (command.type == 'create_table_if_not_exists') and (command.table_name !== ''):
+			self._query = 'CREATE TABLE IF NOT EXISTS `%s` (' % (command.table_name)
+
+		# Invalid result reached
+		else
+			return False
+
+		# Internal data
+		nice_column = []
+		nice_commands = []
+		auto_increment_indicator = ""
+
+		# Check if no columns set
+		if len(self._columns) <= 0:
+			return False
+
+		# Loop through columns
+		for column in self._columns:
+			attrs = ""
+			auto_increment_indicator = ""
+
+			# Check if column not null or null
+			if ('null' in column['column_name']) and (column['column_name']['null'] == False):
+				attrs += " NOT NULL"
+			else:
+				attrs += " NULL"
+
+			# Check for auto increment
+			if ('auto_increment' in column['column_name']) and (column['column_name']['auto_increment'] == True):
+				attrs += " AUTO_INCREMENT"
+				auto_increment_indicator = " AUTO_INCREMENT=1"
+
+			# Check for default value
+			if ('default' in column['column_name']) and (column['column_name']['default'] !== ""):
+				attrs += " DEFAULT '%s'" % (column['column_name']['default'])
+
+			# Append column end command
+			nice_column.append("`%s` %s%s" % (column['column_name'], column['column_name']['type'], attrs))
+
+			# Check if column in primary key
+			if ('primary' in column['column_name']) and (column['column_name']['primary'] == True):
+				nice_commands.append("PRIMARY KEY (`%s`)" % (column['column_name']))
+
+			# Check if column is index
+			if ('index' in column['column_name']) and (column['column_name']['index'] == True):
+				nice_commands.append("KEY `%s` (`%s`)" % (column['column_name']))
+
+			# Concatenate all commands
+			all_commands = nice_column + nice_commands
+
+			# check if commands empty
+			if len(all_commands) <= 0:
+				return False
+
+			# append commands to the final query
+			self._query += ",".join(all_commands)
+
+		# Set engine and charset
+		if ((command.type == 'create_table_if_not_exists') or (command.type == 'create_table')) and (command.table_name !== ''):
+			self._query += ') ENGINE=%s DEFAULT CHARSET=%s%s;";' % (self._engine, self._charset, auto_increment_indicator)
+
+		# Invalid result reached
+		else
+			return False
+
+	def _translate_alter_table(self, command):
+		"""Translate alter table command"""
+
+		# Build Alter table command
+		if (command.type == 'alter_table') and (command.table_name !== ''):
+			self._query = 'ALTER TABLE %s' % (command.table_name)
+
+		# Loop through columns
+		for column in self._columns:
+			attrs = ""
+			action_type = "ADD"
+
+			# Check if action is add
+			if ('add' in column['column_name']) and (column['column_name']['add'] == True):
+				action_type = "ADD"
+
+			# Check if action is modify
+			elif ('modify' in column['column_name']) and (column['column_name']['modify'] == True):
+				action_type = "MODIFY"
+
+			# Check if action is drop
+			elif ('drop' in column['column_name']) and (column['column_name']['drop'] == True):
+				action_type = "DROP"
+
+			# Set default
+			else:
+				action_type = "ADD"
+
+			# Check if column not null or null
+			if ('null' in column['column_name']) and (column['column_name']['null'] == False) and (action_type !== 'DROP'):
+				attrs += " NOT NULL"
+			elif (action_type !== 'DROP'):
+				attrs += " NULL"
+
+			# Check for auto increment
+			if ('auto_increment' in column['column_name']) and (column['column_name']['auto_increment'] == True) and (action_type !== 'DROP'):
+				attrs += " AUTO_INCREMENT"
+
+			# Check for default value
+			if ('default' in column['column_name']) and (column['column_name']['default'] !== "") and (action_type !== 'DROP'):
+				attrs += " DEFAULT '%s'" % (column['column_name']['default'])
+
+			# Append column end command
+			nice_column.append("%s %s %s%s" % (action_type, column['column_name'], column['column_name']['type'], attrs))
+
+			# append commands to the final query
+			self._query += "\n".join(nice_column)
 
 class PostgreSQLTableBuilder(object):
 	"""PostgreSQL Table Builder"""
