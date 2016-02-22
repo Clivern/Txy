@@ -117,69 +117,85 @@ class MySQLTableBuilder(object):
 			}
 		})
 
-	def big_increments(self, column_name, lenght = 20):
+	def big_increments(self, column_name, length = 20):
 		"""Add big auto increments column"""
+		length = length if( length <= 20 ) else 20
+
 		return self._add_column(column_name, {
-			'type' : 'INT',
-			'length' : lenght if( lenght <= 20 ) else 20,
+			'type' : 'INT(%s)' % (length),
+			'length' : length,
 			'null' : False,
 			'auto_increment' : True
 		})
 
-	def increments(self, column_name, lenght = 11):
+	def increments(self, column_name, length = 11):
 		"""Add auto increments column"""
+		length = length if( length <= 11 ) else 11
+
 		return self._add_column(column_name, {
-			'type' : 'INT',
-			'length' : lenght if( lenght <= 11 ) else 11,
+			'type' : 'INT(%s)' % (length),
+			'length' : length,
 			'null' : False,
 			'auto_increment' : True
 		})
 
-	def big_integer(self, column_name, lenght = 20):
+	def big_integer(self, column_name, length = 20):
 		"""Add big integer column"""
+		length = length if( length <= 20 ) else 20
+
 		return self._add_column(column_name, {
-			'type' : 'BIGINT',
-			'lenght' : lenght if( lenght <= 20 ) else 20,
+			'type' : 'BIGINT(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
-	def integer(self, column_name, lenght = 11):
+	def integer(self, column_name, length = 11):
 		"""Add integer column"""
+		length = length if( length <= 11 ) else 11
+
 		return self._add_column(column_name, {
-			'type' : 'INT',
-			'lenght' : lenght if( lenght <= 11 ) else 11,
+			'type' : 'INT(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
-	def medium_integer(self, column_name, lenght = 9):
+	def medium_integer(self, column_name, length = 9):
 		"""Add medium integer column"""
+		length = length if( length <= 9 ) else 9
+
 		return self._add_column(column_name, {
-			'type' : 'MEDIUMINT',
-			'lenght' : lenght if( lenght <= 9 ) else 9,
+			'type' : 'MEDIUMINT(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
-	def small_integer(self, column_name, lenght = 6):
+	def small_integer(self, column_name, length = 6):
 		"""Add small integer column"""
+		length = length if( length <= 6 ) else 6
+
 		return self._add_column(column_name, {
-			'type' : 'SMALLINT',
-			'lenght' : lenght if( lenght <= 6 ) else 6,
+			'type' : 'SMALLINT(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
-	def tiny_integer(self, column_name, lenght = 4):
+	def tiny_integer(self, column_name, length = 4):
 		"""Add tiny integer column"""
+		length = length if( length <= 4 ) else 4
+
 		return self._add_column(column_name, {
-			'type' : 'TINYINT',
-			'lenght' : lenght if( lenght <= 4 ) else 4,
+			'type' : 'TINYINT(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
 	def binary(self, column_name, column_length = 255):
 		"""Add binary column"""
+		length = length if( length <= 255 ) else 255
+
 		return self._add_column(column_name, {
-			'type' : 'BINARY',
-			'lenght' : lenght if( lenght <= 255 ) else 255,
+			'type' : 'BINARY(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
@@ -192,32 +208,38 @@ class MySQLTableBuilder(object):
 
 	def string(self, column_name, column_length = 250):
 		"""Add varchar column"""
+		length = length if( length <= 250 ) else 250
+
 		return self._add_column(column_name, {
-			'type' : 'VARCHAR',
-			'lenght' : lenght if( lenght <= 250 ) else 250,
+			'type' : 'VARCHAR(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
 	def varchar(self, column_name, column_length = 250):
 		"""Add varchar column"""
+		length = length if( length <= 250 ) else 250
+
 		return self._add_column(column_name, {
-			'type' : 'VARCHAR',
-			'lenght' : lenght if( lenght <= 250 ) else 250,
+			'type' : 'VARCHAR(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
 	def char(self, column_name, column_length = 255):
 		"""Add char column"""
+		length = length if( length <= 255 ) else 255
+
 		return self._add_column(column_name, {
-			'type' : 'CHAR',
-			'lenght' : lenght if( lenght <= 255 ) else 255,
+			'type' : 'CHAR(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
 	def decimal(self, column_name, length, decimals):
 		"""Add decimal column"""
 		return self._add_column(column_name, {
-			'type' : 'DECIMAL',
+			'type' : 'DECIMAL(%s,%s)' % (length, decimals),
 			'length' : length,
 			'decimals' : decimals,
 			'null' : False
@@ -226,7 +248,7 @@ class MySQLTableBuilder(object):
 	def double(self, column_name, length, decimals):
 		"""Add double column"""
 		return self._add_column(column_name, {
-			'type' : 'DOUBLE',
+			'type' : 'DOUBLE(%s,%s)' % (length, decimals),
 			'length' : length,
 			'decimals' : decimals,
 			'null' : False
@@ -243,7 +265,7 @@ class MySQLTableBuilder(object):
 	def float(self, column_name, length, decimals):
 		"""Add float column"""
 		return self._add_column(column_name, {
-			'type' : 'FLOAT',
+			'type' : 'FLOAT(%s,%s)' % (length, decimals),
 			'length' : length,
 			'decimals' : decimals,
 			'null' : False
@@ -314,9 +336,11 @@ class MySQLTableBuilder(object):
 
 	def year(self, column_name, length = 4):
 		"""Add year column"""
+		length = length if( (length == 4) or (length == 2) ) else 4
+
 		return self._add_column(column_name, {
-			'type' : 'YEAR',
-			'length' : lenght if( (lenght == 4) or (lenght == 2) ) else 4,
+			'type' : 'YEAR(%s)' % (length),
+			'length' : length,
 			'null' : False
 		})
 
@@ -445,7 +469,7 @@ class MySQLTableBuilder(object):
 
 	def _translate_columns(self):
 		"""Translate table creation command"""
-		pass
+
 
 	def _translate_commands(self):
 		"""Translate custom commands"""
