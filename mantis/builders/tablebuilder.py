@@ -63,7 +63,8 @@ class MySQLTableBuilder(object):
 		self.reset(['table', 'columns', 'commands'])
 		# Add command
 		return self._add_command({
-			'create_table' : table_name
+			'type' : 'create_table',
+			'table_name' : table_name
 		})
 
 	def drop_table(self, table_name):
@@ -72,7 +73,8 @@ class MySQLTableBuilder(object):
 		self.reset(['table', 'columns', 'commands'])
 		# Add Command
 		return self._add_command({
-			'drop_table' : table_name
+			'type' : drop_table,
+			'table_name' : table_name
 		})
 
 	def drop_table_if_exists(self, table_name):
@@ -81,7 +83,8 @@ class MySQLTableBuilder(object):
 		self.reset(['table', 'columns', 'commands'])
 		# Add Command
 		return self._add_command({
-			'drop_table_if_not_exists' : table_name
+			'type' : 'drop_table_if_not_exists',
+			'table_name' : table_name
 		})
 
 	def rename_table(self, from_name, to_name):
@@ -90,10 +93,9 @@ class MySQLTableBuilder(object):
 		self.reset(['table', 'columns', 'commands'])
 		# Add Command
 		return self._add_command({
-			'rename_table' : {
-				'from_name' : from_name,
-				'to_name' : to_name
-			}
+			'type' : 'rename_table',
+			'from_table_name' : from_name,
+			'to_table_name' : to_name
 		})
 
 	def has_table(self, table_name):
@@ -102,7 +104,8 @@ class MySQLTableBuilder(object):
 		self.reset(['table', 'columns', 'commands'])
 		# Add Command
 		return self._add_command({
-			'has_table' : table_name
+			'type' : 'has_table',
+			'table_name' : table_name
 		})
 
 	def has_column(self, table_name, column_name):
@@ -111,10 +114,9 @@ class MySQLTableBuilder(object):
 		self.reset(['table', 'columns', 'commands'])
 		# Add Command
 		return self._add_command({
-			'has_column' : {
-				'table_name' : table_name,
-				'column_name' : column_name
-			}
+			'type' : 'has_column',
+			'table_name' : table_name,
+			'column_name' : column_name
 		})
 
 	def big_increments(self, column_name, length = 20):
@@ -415,7 +417,7 @@ class MySQLTableBuilder(object):
 		self._translate()
 		return False if( self._query == '' ) else self._query
 
-	def reset(self, type = ['table', 'columns', 'commands', 'engine', 'charset', 'collation']):
+	def reset(self, type = ['table', 'columns', 'commands', 'engine', 'charset', 'collation', 'query']):
 		""" Reset columns and commands"""
 		# Check to reset table
 		if 'table' in type:
@@ -440,6 +442,10 @@ class MySQLTableBuilder(object):
 		# Check to reset collation
 		if 'collation' in type:
 			self._collation = "utf8_general_ci"
+
+		# Check to reset query
+		if 'query' in type:
+			self._query = ""
 
 		return self
 
@@ -467,10 +473,17 @@ class MySQLTableBuilder(object):
 			# Translate other commands
 			self._translate_commands()
 
+		else:
+			return False
+
+
 	def _translate_columns(self):
 		"""Translate table creation command"""
-
+		for command in self._commands:
+			for column in self._columns:
+				pass
 
 	def _translate_commands(self):
 		"""Translate custom commands"""
-		pass
+		for command in self._commands:
+			pass
