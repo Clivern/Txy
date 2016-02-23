@@ -10,8 +10,12 @@
 
 from setuptools import setup
 from mantis import __version__
-from mantis import read_file
+from mantis.builders.tablebuilder import MySQLTableBuilder
+import os
 
+# Utility function to read the README file.
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name = "mantis",
@@ -23,7 +27,7 @@ setup(
     keywords = "orm,database,schema,builder",
     url = "http://clivern.github.io/mantis/",
     packages = ['mantis'],
-    long_description = read_file('README.md'),
+    long_description = read('README.md'),
     classifiers = [
         'Classifier: Development Status :: 3 - Alpha',
         'Classifier: Framework :: Flask',
