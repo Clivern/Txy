@@ -9,8 +9,7 @@
 """
 
 from setuptools import setup
-from mantis import __version__
-from mantis.builders.tablebuilder import MySQLTableBuilder
+import mantis
 import os
 
 # Utility function to read the README file.
