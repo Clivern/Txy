@@ -8,11 +8,12 @@
     :copyright: (c) 2016 by Clivern (hello@clivern.com).
     :license: MIT, see LICENSE for more details.
 """
+
 from __future__ import print_function
 
 
 class Config(dict):
-
+    """Mantis Config Module"""
 
     def __getattr__(self, name):
     	""" Get Attribute value with name """
@@ -55,7 +56,6 @@ class Config(dict):
 	        val = val.replace('-', '_')
 
 	    return val
-
 
 
 	def denormalize(val):

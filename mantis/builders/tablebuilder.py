@@ -12,7 +12,295 @@ from __future__ import print_function
 
 class SQLiteTableBuilder(object):
 	"""SQLite Table Builder"""
-	pass
+
+	# Table name
+	_table = None
+
+	# A list of columns to create
+	_columns = []
+
+	# A list of commands to execute
+	_commands = []
+
+	# End Query to run
+	_query = ""
+
+	# Temp return values used to support chaining
+	_temp = None
+
+	# Query logger
+	_logger = None
+
+	def set_logger(self, logger):
+		"""Set logger"""
+		self._logger = logger
+
+	def create_table(self, table_name):
+		"""Create a new table in database"""
+		# Reset table, columns and commands
+		self.reset(['table', 'columns', 'commands', 'query'])
+		# Add command
+		self._add_command({
+			'type' : 'create_table',
+			'table_name' : table_name
+		})
+		return self
+
+	def create_table_if_not_exists(self, table_name):
+		"""Create a new table in database"""
+		# Reset table, columns and commands
+		self.reset(['table', 'columns', 'commands', 'query'])
+		# Add command
+		self._add_command({
+			'type' : 'create_table_if_not_exists',
+			'table_name' : table_name
+		})
+		return self
+
+	def alter_table(self, table_name):
+		"""Alter table in database"""
+		# Reset table, columns and commands
+		self.reset(['table', 'columns', 'commands', 'query'])
+		# Add command
+		self._add_command({
+			'type' : 'alter_table',
+			'table_name' : table_name
+		})
+		return self
+
+	def drop_table(self, table_name):
+		"""Drop table from database"""
+		# Reset table, columns and commands
+		self.reset(['table', 'columns', 'commands', 'query'])
+		# Add Command
+		self._add_command({
+			'type' : 'drop_table',
+			'table_name' : table_name
+		})
+		return self
+
+	def drop_table_if_exists(self, table_name):
+		"""Drop table if exists from database"""
+		# Reset table, columns and commands
+		self.reset(['table', 'columns', 'commands', 'query'])
+		# Add Command
+		self._add_command({
+			'type' : 'drop_table_if_exists',
+			'table_name' : table_name
+		})
+		return self
+
+	def rename_table(self, from_name, to_name):
+		"""Rename table"""
+		# Reset table, columns and commands
+		self.reset(['table', 'columns', 'commands', 'query'])
+		# Add Command
+		self._add_command({
+			'type' : 'rename_table',
+			'from_table_name' : from_name,
+			'to_table_name' : to_name
+		})
+		return self
+
+	def text(self, column_name):
+		"""Add text column"""
+		self._temp = [self._add_column(column_name, {
+			'type' : 'TEXT',
+		})]
+		return self
+
+	def numeric(self, column_name):
+		"""Add numeric column"""
+		self._temp = [self._add_column(column_name, {
+			'type' : 'NUMERIC',
+		})]
+		return self
+
+	def integer(self, column_name):
+		"""Add integer column"""
+		self._temp = [self._add_column(column_name, {
+			'type' : 'INTEGER',
+		})]
+		return self
+
+	def real(self, column_name):
+		"""Add real column"""
+		self._temp = [self._add_column(column_name, {
+			'type' : 'REAL',
+		})]
+		return self
+
+	def blob(self, column_name):
+		"""Add blob column"""
+		self._temp = [self._add_column(column_name, {
+			'type' : 'BLOB',
+		})]
+		return self
+
+	def null(self, column_name):
+		"""Add null column"""
+		self._temp = [self._add_column(column_name, {
+			'type' : 'NULL',
+		})]
+		return self
+
+	def add(self):
+		"""Add a new column"""
+		for _temp in self._temp:
+			self._columns[_temp]['parameters']['add'] = True
+		return self
+
+	def get(self):
+		"""Get Query from columns and commands"""
+		self._translate()
+		return False if( self._query == '' ) else self._query
+
+	def reset(self, type = ['table', 'columns', 'commands', 'query']):
+		""" Reset columns and commands"""
+		# Check to reset table
+		if 'table' in type:
+			self._table = None
+
+		# Check to reset columns
+		if 'columns' in type:
+			self._columns = []
+
+		# Check to reset commands
+		if 'commands' in type:
+			self._commands = []
+
+		# Check to reset query
+		if 'query' in type:
+			self._query = ""
+
+		return self
+
+	def _add_command(self, command):
+		"""Add commands storage"""
+		self._commands.append(command)
+		return len(self._commands) - 1
+
+	def _add_column(self, column_name, parameters):
+		"""Add columns storage"""
+		self._columns.append({
+			'column_name' : column_name,
+			'parameters' : parameters
+		})
+		return len(self._columns) - 1
+
+	def _translate(self):
+		""" Translate columns and commands to Query"""
+		# Check for current flow
+		if (len(self._columns) > 0) and (len(self._commands) > 0):
+			# Translate create table command
+			self._translate_columns()
+
+		elif (len(self._commands) > 0):
+			# Translate other commands
+			self._translate_commands()
+		# Invalid result reached
+		else:
+			return False
+
+	def _translate_columns(self):
+		"""Translate table creation command"""
+		for command in self._commands:
+
+			# Check if command is create table
+			if command['type'] == 'create_table':
+				return self._translate_create_table(command)
+
+			# Check if command is alter table
+			elif command['type'] == 'alter_table':
+				return self._translate_alter_table(command)
+
+			# Check if logger is availabe
+			if self._logger != None:
+				self._logger.log(self._query)
+
+			return True
+
+	def _translate_commands(self):
+		"""Translate custom commands"""
+		self._query = ""
+
+		# Loop through commands
+		for command in self._commands:
+
+			# Check if `drop table if exists` command
+			if command['type'] == 'drop_table_if_exists':
+				self._query += "DROP TABLE IF EXISTS %s" % (command['table_name'])
+
+			# Check if `drop table` command
+			elif command['type'] == 'drop_table':
+				self._query += "DROP TABLE %s" % (command['table_name'])
+
+			# Check if `rename table` command
+			elif command['type'] == 'rename_table':
+				self._query += "ALTER TABLE %s RENAME TO %s" % (command['from_table_name'], command['to_table_name'])
+
+			# Invalid result reached
+			else:
+				return False
+
+		# Check if logger is availabe
+		if self._logger != None:
+			self._logger.log(self._query)
+
+		return True
+
+	def _translate_create_table(self, command):
+		"""Translate create table command"""
+
+		# Build create table command
+		if (command['type'] == 'create_table') and (command['table_name'] != ''):
+			self._query = 'CREATE TABLE %s (\n    ' % (command['table_name'])
+
+		# Build create table if not exists command
+		elif (command['type'] == 'create_table_if_not_exists') and (command['table_name'] != ''):
+			self._query = 'CREATE TABLE IF NOT EXISTS %s (\n    ' % (command['table_name'])
+
+		# Invalid result reached
+		else:
+			return False
+
+		# Internal data
+		nice_column = []
+
+		# Check if no columns set
+		if len(self._columns) <= 0:
+			return False
+
+		# Loop through columns
+		for column in self._columns:
+
+			# Append column end command
+			nice_column.append("%s  %s" % (column['column_name'], column['parameters']['type']))
+
+		# check if commands empty
+		if len(nice_column) <= 0:
+			return False
+
+		# append commands to the final query
+		self._query += ",\n    ".join(nice_column)
+
+		# End Query
+		self._query += '\n)'
+
+	def _translate_alter_table(self, command):
+		"""Translate alter table command"""
+
+		# Loop through columns
+		nice_column = []
+
+		for column in self._columns:
+
+			# Append column end command
+			nice_column.append('ALTER TABLE %s ADD COLUMN %s %s;' % (command['table_name'], column['column_name'], column['parameters']['type']))
+
+		# append commands to the final query
+		self._query += "\n".join(nice_column)
+
 
 
 class MySQLTableBuilder(object):
