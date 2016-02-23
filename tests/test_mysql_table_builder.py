@@ -1,5 +1,15 @@
+"""
+    Mantis
+    ~~~~~~
+
+    A Minimalist ORM for Python
+
+    :copyright: (c) 2016 by Clivern (hello@clivern.com).
+    :license: MIT, see LICENSE for more details.
+"""
+
 from __future__ import print_function
-from mantis.builders.tablebuilder import MySQLTableBuilder, SQLiteTableBuilder, PostgreSQLTableBuilder
+from mantis.builders.tablebuilder import MySQLTableBuilder
 import unittest
 
 class TestMySQLTableBuilderMethods(unittest.TestCase):
