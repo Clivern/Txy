@@ -9,7 +9,6 @@
 """
 
 from setuptools import setup
-import mantis
 import os
 
 # Utility function to read the README file.
@@ -18,14 +17,14 @@ def read(fname):
 
 setup(
     name = "mantis",
-    version = __version__,
+    version = "1.0.0",
     author = "Clivern",
     author_email = "hello@clivern.com",
     description="A Minimalist ORM for Python",
     license = "MIT",
     keywords = "orm,database,schema,builder",
     url = "http://clivern.github.io/mantis/",
-    packages = ['mantis'],
+    packages = ['mantis', 'mantis.adapters', 'mantis.builders', 'mantis.exceptions', 'mantis.helpers'],
     long_description = read('README.md'),
     classifiers = [
         'Classifier: Development Status :: 3 - Alpha',
