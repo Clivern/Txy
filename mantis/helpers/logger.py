@@ -42,6 +42,7 @@ class Logger(object):
 
 	def config(self, file_path, logger_type="all", log_format='%(asctime)s - %(levelname)s: %(message)s', date_format = '%Y-%m-%d'):
 		"""Configure a Logger"""
+
 		now = datetime.datetime.now()
 		self._logger[logger_type] = logging.getLogger('mantis')
 		self._logger[logger_type].setLevel(logging.DEBUG)
@@ -72,45 +73,44 @@ class Logger(object):
 		formatter = logging.Formatter(log_format)
 		fh.setFormatter(formatter)
 		self._logger[logger_type].addHandler(fh)
-
 		return self
 
 	def log(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of info type"""
+
 		if log_message == "":
 			return self
-
 		self._logger[logger_type].info(log_message, extra=args)
 		return self
 
 	def warning(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of warning type"""
+
 		if log_message == "":
 			return self
-
 		self._logger[logger_type].warning(log_message, extra=args)
 		return self
 
 	def error(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of error type"""
+
 		if log_message == "":
 			return self
-
 		self._logger[logger_type].error(log_message, extra=args)
 		return self
 
 	def critical(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of critical type"""
+
 		if log_message == "":
 			return self
-
 		self._logger[logger_type].critical(log_message, extra=args)
 		return self
 
 	def info(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of info type"""
+
 		if log_message == "":
 			return self
-
 		self._logger[logger_type].info(log_message, extra=args)
 		return self
