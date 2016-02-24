@@ -13,6 +13,7 @@ from mantis.builders.tablebuilder import MySQLTableBuilder
 import unittest
 
 class TestMySQLTableBuilderMethods(unittest.TestCase):
+	"""MySQL Table Builder Test Cases"""
 
 	def test_drop_table(self):
 		"""Test drop table"""

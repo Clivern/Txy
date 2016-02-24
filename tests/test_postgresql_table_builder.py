@@ -13,6 +13,7 @@ from mantis.builders.tablebuilder import PostgreSQLTableBuilder
 import unittest
 
 class TestPostgreSQLTableBuilderMethods(unittest.TestCase):
+	"""PostgreSQL Table Builder Test Cases"""
 	pass
 
 if __name__ == '__main__':
