@@ -302,7 +302,6 @@ class SQLiteTableBuilder(object):
 		self._query += "\n".join(nice_column)
 
 
-
 class MySQLTableBuilder(object):
 	"""MySQL Table Builder"""
 
