@@ -10,6 +10,7 @@
 """
 
 import logging
+import datetime
 
 class Logger(object):
 	"""Handle ALl Mantis Logging Tasks"""
@@ -18,7 +19,7 @@ class Logger(object):
 	_logger = {
 
 		# Default Logger
-		'default' : None,
+		'all' : None,
 
 		# SQLite Table Builder Logger
 		'sqlite_tab' : None,
@@ -39,11 +40,34 @@ class Logger(object):
 		'postgresql_qui' : None
 	}
 
-	def config(self, logger_type="default", log_format='@%(asctime)s - %(levelname)s: %(message)s'):
+	def config(self, file_path, logger_type="all", log_format='%(asctime)s - %(levelname)s: %(message)s', date_format = '%Y-%m-%d'):
 		"""Configure a Logger"""
+		now = datetime.datetime.now()
 		self._logger[logger_type] = logging.getLogger('mantis')
 		self._logger[logger_type].setLevel(logging.DEBUG)
-		fh = logging.FileHandler('test.log')
+
+		if logger_type == 'sqlite_tab':
+			log_file_name = "SQLite Table Builder %s.log"  % (now.strftime(date_format))
+
+		elif logger_type == 'sqlite_qui':
+			log_file_name = "SQLite Query Builder %s.log" % (now.strftime(date_format))
+
+		elif logger_type == 'mysql_tab':
+			log_file_name = "MySQL Table Builder %s.log" % (now.strftime(date_format))
+
+		elif logger_type == 'mysql_qui':
+			log_file_name = "MySQL Query Builder %s.log" % (now.strftime(date_format))
+
+		elif logger_type == 'postgresql_tab':
+			log_file_name = "PostgreSQL Table Builder %s.log" % (now.strftime(date_format))
+
+		elif logger_type == 'postgresql_qui':
+			log_file_name = "PostgreSQL Query Builder %s.log" % (now.strftime(date_format))
+
+		else:
+			log_file_name = "%s.log" % (now.strftime(date_format))
+
+		fh = logging.FileHandler(file_path + log_file_name)
 		fh.setLevel(logging.DEBUG)
 		formatter = logging.Formatter(log_format)
 		fh.setFormatter(formatter)
@@ -51,7 +75,7 @@ class Logger(object):
 
 		return self
 
-	def log(self, log_message, args = {}, logger_type = "default"):
+	def log(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of info type"""
 		if log_message == "":
 			return self
@@ -59,7 +83,7 @@ class Logger(object):
 		self._logger[logger_type].info(log_message, extra=args)
 		return self
 
-	def warning(self, log_message, args = {}, logger_type = "default"):
+	def warning(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of warning type"""
 		if log_message == "":
 			return self
@@ -67,7 +91,7 @@ class Logger(object):
 		self._logger[logger_type].warning(log_message, extra=args)
 		return self
 
-	def error(self, log_message, args = {}, logger_type = "default"):
+	def error(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of error type"""
 		if log_message == "":
 			return self
@@ -75,7 +99,7 @@ class Logger(object):
 		self._logger[logger_type].error(log_message, extra=args)
 		return self
 
-	def critical(self, log_message, args = {}, logger_type = "default"):
+	def critical(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of critical type"""
 		if log_message == "":
 			return self
@@ -83,7 +107,7 @@ class Logger(object):
 		self._logger[logger_type].critical(log_message, extra=args)
 		return self
 
-	def info(self, log_message, args = {}, logger_type = "default"):
+	def info(self, log_message, args = {}, logger_type = "all"):
 		"""Log messages of info type"""
 		if log_message == "":
 			return self
