@@ -296,7 +296,7 @@ class SQLiteTableBuilder(object):
 		for column in self._columns:
 
 			# Append column end command
-			nice_column.append('ALTER TABLE %s ADD COLUMN %s %s;' % (command['table_name'], column['column_name'], column['parameters']['type']))
+			nice_column.append('ALTER TABLE %s ADD COLUMN %s %s' % (command['table_name'], column['column_name'], column['parameters']['type']))
 
 		# append commands to the final query
 		self._query += "\n".join(nice_column)
@@ -446,7 +446,8 @@ class MySQLTableBuilder(object):
 			'type' : 'INT(%s)' % (length),
 			'length' : length,
 			'null' : False,
-			'auto_increment' : True
+			'auto_increment' : True,
+			'primary' : True
 		})]
 		return self
 
@@ -458,7 +459,8 @@ class MySQLTableBuilder(object):
 			'type' : 'INT(%s)' % (length),
 			'length' : length,
 			'null' : False,
-			'auto_increment' : True
+			'auto_increment' : True,
+			'primary' : True
 		})]
 		return self
 
@@ -517,7 +519,7 @@ class MySQLTableBuilder(object):
 		})]
 		return self
 
-	def binary(self, column_name, column_length = 255):
+	def binary(self, column_name, length = 255):
 		"""Add binary column"""
 		length = length if( length <= 255 ) else 255
 
@@ -536,7 +538,7 @@ class MySQLTableBuilder(object):
 		})]
 		return self
 
-	def string(self, column_name, column_length = 250):
+	def string(self, column_name, length = 250):
 		"""Add varchar column"""
 		length = length if( length <= 250 ) else 250
 
@@ -547,7 +549,7 @@ class MySQLTableBuilder(object):
 		})]
 		return self
 
-	def varchar(self, column_name, column_length = 250):
+	def varchar(self, column_name, length = 250):
 		"""Add varchar column"""
 		length = length if( length <= 250 ) else 250
 
@@ -558,7 +560,7 @@ class MySQLTableBuilder(object):
 		})]
 		return self
 
-	def char(self, column_name, column_length = 255):
+	def char(self, column_name, length = 255):
 		"""Add char column"""
 		length = length if( length <= 255 ) else 255
 
@@ -765,6 +767,7 @@ class MySQLTableBuilder(object):
 		"""Mark column as auto incremented"""
 		for _temp in self._temp:
 			self._columns[_temp]['parameters']['auto_increment'] = True
+			self._columns[_temp]['parameters']['primary'] = True
 		return self
 
 	def primary(self):
@@ -954,10 +957,10 @@ class MySQLTableBuilder(object):
 		if len(self._columns) <= 0:
 			return False
 
+		auto_increment_indicator = ""
 		# Loop through columns
 		for column in self._columns:
 			attrs = ""
-			auto_increment_indicator = ""
 
 			# Check if column not null or null
 			if ('null' in column['parameters']) and (column['parameters']['null'] == False):
@@ -983,7 +986,7 @@ class MySQLTableBuilder(object):
 
 			# Check if column is index
 			if ('index' in column['parameters']) and (column['parameters']['index'] == True):
-				nice_commands.append("KEY `%s` (`%s`)" % (column['column_name']))
+				nice_commands.append("KEY `%s` (`%s`)" % (column['column_name'], column['column_name']))
 
 
 		# Concatenate all commands
@@ -998,7 +1001,7 @@ class MySQLTableBuilder(object):
 
 		# Set engine and charset
 		if ((command['type'] == 'create_table_if_not_exists') or (command['type'] == 'create_table')) and (command['table_name'] != ''):
-			self._query += '\n) ENGINE=%s DEFAULT CHARSET=%s%s;";' % (self._engine, self._charset, auto_increment_indicator)
+			self._query += '\n) ENGINE=%s DEFAULT CHARSET=%s%s' % (self._engine, self._charset, auto_increment_indicator)
 
 		# Invalid result reached
 		else:
