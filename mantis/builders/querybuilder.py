@@ -41,20 +41,20 @@ class MySQLQueryBuilder(object):
 		self._table = table
 
 	def get(self):
-		"""Get final query"""
+		"""Get final query and log if logger available"""
 		# Check if logger is availabe
 		if self._logger != None:
 			self._logger.log(self._query)
+		# Return query
+		return self._query
 
 	def one(self):
 		"""Retun only one result"""
 		_temp['one'] = True
-		pass
 
 	def many(self):
 		"""Return many results"""
 		_temp['many'] = True
-		pass
 
 	def select(self, columns = []):
 		"""Build select clause"""
@@ -68,9 +68,9 @@ class MySQLQueryBuilder(object):
 		"""Insert many records"""
 		_temp['insert_many'] = records
 
-	def update(self):
+	def update(self, new_record):
 		"""Update existing records"""
-		pass
+		_temp['update'] = new_record
 
 	def where(self, conditions = {}):
 		"""Build where clause"""
@@ -92,21 +92,21 @@ class MySQLQueryBuilder(object):
 		"""Build having clause"""
 		pass
 
-	def join(self):
+	def join(self, conditions):
 		"""Join two tables"""
-		pass
+		_temp['join'] = conditions
 
-	def left_join(self):
+	def left_join(self, conditions):
 		"""Left join two tables"""
-		pass
+		_temp['left_join'] = conditions
 
-	def right_join(self):
+	def right_join(self, conditions):
 		"""Right join two tables"""
-		pass
+		_temp['right_join'] = conditions
 
-	def union(self):
+	def union(self, query):
 		"""Union two queries together"""
-		pass
+		_temp['union'] = query
 
 	def order_by(self, order_by = {}):
 		"""Add order by clause"""
