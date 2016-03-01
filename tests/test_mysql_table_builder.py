@@ -12,6 +12,7 @@ from __future__ import print_function
 from mantis.builders.tablebuilder import MySQLTableBuilder
 import unittest
 
+
 class TestMySQLTableBuilderMethods(unittest.TestCase):
 	"""MySQL Table Builder Test Cases"""
 

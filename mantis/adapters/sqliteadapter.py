@@ -13,37 +13,37 @@ import sqlite3
 
 
 class SQLiteAdapter(object):
-	"""SQLite Adapter"""
-	_configs = {}
-	_conn = False
-	_cursor = False
+    """SQLite Adapter"""
+    _configs = {}
+    _conn = False
+    _cursor = False
 
-	def __init__(self, configs):
-		self._configs = configs
-		return self
+    def __init__(self, configs):
+        self._configs = configs
+        return self
 
-	def set_connection(self):
-		self._conn = sqlite3.connect(_configs.db)
-		self._cursor = self._conn.cursor()
-		return self
+    def set_connection(self):
+        self._conn = sqlite3.connect(_configs.db)
+        self._cursor = self._conn.cursor()
+        return self
 
-	def get_connection(self):
-		return self._conn
+    def get_connection(self):
+        return self._conn
 
-	def execute(self, query):
-		return  self._cursor.execute(query)
+    def execute(self, query):
+        return self._cursor.execute(query)
 
-	def build_table(self, query):
-		return  self._cursor.execute(query)
+    def build_table(self, query):
+        return self._cursor.execute(query)
 
-	def get(self):
-		pass
+    def get(self):
+        pass
 
-	def insert(self):
-		pass
+    def insert(self):
+        pass
 
-	def bulk_insert(self):
-		pass
+    def bulk_insert(self):
+        pass
 
-	def update(self):
-		pass
+    def update(self):
+        pass
