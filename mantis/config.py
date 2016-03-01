@@ -16,7 +16,7 @@ class Config(dict):
     """Mantis Config Module"""
 
     def __getattr__(self, name):
-    	""" Get Attribute value with name """
+        """Get Attribute value with name"""
 
         if name in self.__dict__:
             return self.__dict__[name]
@@ -30,9 +30,8 @@ class Config(dict):
             else:
                 raise AttributeError('no attribute named %s' % name)
 
-
     def __setattr__(self, name, value):
-    	""" Set Attribute name and value """
+        """ Set Attribute name and value """
 
         if name in self.__dict__:
             self.__dict__[name] = value
@@ -47,21 +46,19 @@ class Config(dict):
                 # New attribute
                 self[name] = value
 
+    def normalize(val):
+        """ Normalize a string so that it can be used as an attribute
+        to a Python object """
 
-	def normalize(val):
-	    """ Normalize a string so that it can be used as an attribute
-	    to a Python object """
+        if val.find('-') != -1:
+            val = val.replace('-', '_')
 
-	    if val.find('-') != -1:
-	        val = val.replace('-', '_')
+        return val
 
-	    return val
+    def denormalize(val):
+        """ De-normalize a string """
 
+        if val.find('_') != -1:
+            val = val.replace('_', '-')
 
-	def denormalize(val):
-	    """ De-normalize a string """
-
-	    if val.find('_') != -1:
-	        val = val.replace('_', '-')
-
-	    return val
+        return val

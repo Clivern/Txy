@@ -11,6 +11,7 @@
 from __future__ import print_function
 import sqlite3
 
+
 class SQLiteAdapter(object):
 	"""SQLite Adapter"""
 	_configs = {}

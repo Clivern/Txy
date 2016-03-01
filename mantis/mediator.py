@@ -19,6 +19,7 @@ from adapters.mysqladapter import MySQLAdapter
 from adapters.postgresqladapter import PostgreSQLAdapter
 from adapters.sqliteadapter import SQLiteAdapter
 
+
 class Mediator(object):
-	"""Mediator Module"""
-	pass
+    """Mediator Module"""
+    pass

@@ -10,6 +10,7 @@
 """
 from __future__ import print_function
 
+
 class MySQLAdapter(object):
 	"""MySQL Adapter"""
 	pass
