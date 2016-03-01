@@ -36,49 +36,53 @@ class MySQLQueryBuilder(object):
 		"""Set logger"""
 		self._logger = logger
 
-	def for_table(self):
+	def for_table(self, table):
 		"""Table to build the query for"""
-		pass
+		self._table = table
 
 	def get(self):
 		"""Get final query"""
-		pass
+		# Check if logger is availabe
+		if self._logger != None:
+			self._logger.log(self._query)
 
 	def one(self):
 		"""Retun only one result"""
+		_temp['one'] = True
 		pass
 
 	def many(self):
 		"""Return many results"""
+		_temp['many'] = True
 		pass
 
-	def select(self):
+	def select(self, columns = []):
 		"""Build select clause"""
-		pass
+		_temp['select'] = columns
 
-	def insert_one(self):
+	def insert_one(self, record):
 		"""Insert one record and return insert id"""
-		pass
+		_temp['insert_one'] = record
 
-	def insert_many(self):
+	def insert_many(self, records):
 		"""Insert many records"""
-		pass
+		_temp['insert_many'] = records
 
 	def update(self):
 		"""Update existing records"""
 		pass
 
-	def where(self):
+	def where(self, conditions = {}):
 		"""Build where clause"""
-		pass
+		_temp['where'] = conditions
 
 	def delete(self):
 		"""Delete all or some of the table records"""
-		pass
+		_temp['delete'] = True
 
 	def truncate(self):
 		"""Truncate all table records"""
-		pass
+		_temp['truncate'] = True
 
 	def group_by(self):
 		"""Build group by clause"""
@@ -104,17 +108,17 @@ class MySQLQueryBuilder(object):
 		"""Union two queries together"""
 		pass
 
-	def order_by(self):
+	def order_by(self, order_by = {}):
 		"""Add order by clause"""
-		pass
+		_temp['order_by'] = order_by
 
-	def offset(self):
+	def offset(self, offset):
 		"""Add offset"""
-		pass
+		_temp['offset'] = offset
 
-	def limit(self):
+	def limit(self, limit):
 		"""Add Limit"""
-		pass
+		_temp['limit'] = limit
 
 	def _translate(self):
 		"""Translate the final query"""
