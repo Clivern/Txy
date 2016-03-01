@@ -11,22 +11,23 @@
 from setuptools import setup
 import os
 
+
 # Utility function to read the README file.
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "mantis",
-    version = "1.0.0",
-    author = "Clivern",
-    author_email = "hello@clivern.com",
+    name="mantis",
+    version="1.0.0",
+    author="Clivern",
+    author_email="hello@clivern.com",
     description="A Minimalist ORM for Python",
-    license = "MIT",
-    keywords = "orm,database,schema,builder",
-    url = "http://clivern.github.io/mantis/",
-    packages = ['mantis', 'mantis.adapters', 'mantis.builders', 'mantis.exceptions', 'mantis.helpers'],
-    long_description = read('README.md'),
-    classifiers = [
+    license="MIT",
+    keywords="orm,database,schema,builder",
+    url="http://clivern.github.io/mantis/",
+    packages=['mantis', 'mantis.adapters', 'mantis.builders', 'mantis.exceptions', 'mantis.helpers'],
+    long_description=read('README.md'),
+    classifiers=[
         'Classifier: Development Status :: 3 - Alpha',
         'Classifier: Framework :: Flask',
         'Classifier: Programming Language :: Python',
