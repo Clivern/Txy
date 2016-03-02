@@ -962,7 +962,7 @@ class MySQLTableBuilder(object):
             attrs = ""
 
             # Check if column not null or null
-            if ('null' in column['parameters']) and (column['parameters']['null']):
+            if ('null' in column['parameters']) and (not column['parameters']['null']):
                 attrs += " NOT NULL"
             else:
                 attrs += " NULL"
@@ -1036,7 +1036,7 @@ class MySQLTableBuilder(object):
                 action_type = "ADD"
 
             # Check if column not null or null
-            if ('null' in column['parameters']) and (column['parameters']['null']) and (action_type != 'DROP'):
+            if ('null' in column['parameters']) and (not column['parameters']['null']) and (action_type != 'DROP'):
                 attrs += " NOT NULL"
             elif (action_type != 'DROP'):
                 attrs += " NULL"
