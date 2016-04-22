@@ -60,31 +60,107 @@ class MySQLQueryBuilder(object):
         _temp['many'] = True
         return self
 
-    def select(self, columns=[]):
+    # .select(['id', 'title', 'content'])
+    # .select(['id as test_id', 'title as test_title'])
+
+    # SELECT column_name,column_name
+    # FROM table_name;
+
+    # SELECT * FROM table_name;
+
+    # SELECT DISTINCT column_name,column_name
+    # FROM table_name;
+
+    def select(self, columns=[], distinct=False):
         """Build select clause"""
         _temp['select'] = columns
         return self
 
-    def insert_one(self, record):
-        """Insert one record and return insert id"""
+    # .insert_one({'title': 'test title', 'content': 'test content'})
+
+    # INSERT INTO table_name
+    # VALUES (value1,value2,value3,...);
+
+    # INSERT INTO table_name (column1,column2,column3,...)
+    # VALUES (value1,value2,value3,...);
+    def insert_one(self, record={}):
+        """Insert one  record and return insert id"""
         _temp['insert_one'] = record
         return self
 
-    def insert_many(self, records):
+    # .insert_many([{'title': 'test title', 'content': 'test content'}, {'title': 'test title', 'content': 'test content'}])
+    def insert_many(self, records=[]):
         """Insert many records"""
         _temp['insert_many'] = records
         return self
 
+    # .update({'title': 'test title', 'content': 'test content'})
+
+    # UPDATE table_name
+    # SET column1=value1,column2=value2,...
+    # WHERE some_column=some_value;
     def update(self, new_record):
         """Update existing records"""
         _temp['update'] = new_record
         return self
 
+    # .where({'and':{'id': 9, 'title': 'test'}})
+    # .where({'or': {'id': 9, 'title': 'test'}})
+
+    # SELECT * FROM Customers
+    # WHERE Country='Mexico';
+    # Operators: 
+    #   =   Equal
+    #   <>  Not equal. Note: In some versions of SQL this operator may be written as !=
+    #   >   Greater than
+    #   <   Less than
+    #   >=  Greater than or equal
+    #   <=  Less than or equal
+    #   BETWEEN Between an inclusive range
+    #   LIKE    Search for a pattern
+    #   IN  To specify multiple possible values for a column
+
+    # SELECT * FROM Customers
+    # WHERE City='Berlin'
+    # OR City='München';
+
+    # SELECT * FROM Customers
+    # WHERE City LIKE 's%';
+
+    # SELECT column_name(s)
+    # FROM table_name
+    # WHERE column_name IN (value1,value2,...);
+
+    # SELECT column_name(s)
+    # FROM table_name
+    # WHERE column_name BETWEEN value1 AND value2;
+
+    # SELECT * FROM Products
+    # WHERE Price BETWEEN 10 AND 20;
+
+    # SELECT * FROM Products
+    # WHERE Price NOT BETWEEN 10 AND 20;
+
+    # SELECT * FROM Products
+    # WHERE (Price BETWEEN 10 AND 20)
+    # AND NOT CategoryID IN (1,2,3);
+
+    # SELECT * FROM Products
+    # WHERE ProductName BETWEEN 'C' AND 'M';
+
+    # SELECT * FROM Products
+    # WHERE ProductName BETWEEN 'C' AND 'M';
     def where(self, conditions={}):
         """Build where clause"""
         _temp['where'] = conditions
         return self
 
+    # DELETE FROM table_name
+    # WHERE some_column=some_value;
+
+    # DELETE FROM table_name;
+    # or
+    # DELETE * FROM table_name;
     def delete(self):
         """Delete all or some of the table records"""
         _temp['delete'] = True
@@ -123,17 +199,25 @@ class MySQLQueryBuilder(object):
         _temp['union'] = query
         return self
 
+    # .order_by({'date': 'asc'})
+    # .order_by({'date': 'desc'})
+
+    # SELECT column_name, column_name
+    # FROM table_name
+    # ORDER BY column_name ASC|DESC, column_name ASC|DESC;
     def order_by(self, order_by={}):
         """Add order by clause"""
         _temp['order_by'] = order_by
         return self
 
-    def offset(self, offset):
+    # .offset(0)
+    def offset(self, offset = 0):
         """Add offset"""
         _temp['offset'] = offset
         return self
 
-    def limit(self, limit):
+    # .limit(10)
+    def limit(self, limit = 10):
         """Add Limit"""
         _temp['limit'] = limit
         return self
