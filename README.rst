@@ -13,28 +13,35 @@ Txy
 
 To use txy, follow the following steps:
 
-1. Create a virtual environment project01
+1. Install txy python command line tool.
+
+.. code-block::
+
+    $ pip install txy
+
+
+2. Create a virtual environment project01
 
 .. code-block::
 
     $ txy create project01
 
 
-2. Get virtual environment project01 info
+3. Get virtual environment project01 info
 
 .. code-block::
 
     $ txy info project01
 
 
-3. Get list of virtual environments
+4. Get list of virtual environments
 
 .. code-block::
 
     $ txy list
 
 
-4. Remove virtual environment project01
+5. Remove virtual environment project01
 
 .. code-block::
 
