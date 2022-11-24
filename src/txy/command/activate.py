@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from pexy.module import Venv
+from txy.module import Venv
 
 
 class ActivateCommand:
@@ -28,5 +28,5 @@ class ActivateCommand:
 	def __init__(self):
 		self._venv = Venv()
 
-	def run(name):
+	def run(self, name):
 		self._venv.activate_env(name)
