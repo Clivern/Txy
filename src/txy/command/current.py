@@ -23,10 +23,10 @@
 from txy.module import Venv
 
 
-class InfoCommand:
+class CurrentCommand:
 
     def __init__(self):
         self._venv = Venv()
 
-    def run(self, name):
-        self._venv.get_env_info(name)
+    def run(self):
+        self._venv.get_current_env_activate()

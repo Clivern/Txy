@@ -40,6 +40,26 @@ class Venv:
         if not os.path.exists(self.base_dir):
             os.makedirs(self.base_dir)
 
+    def get_current_env_activate(self):
+        """
+        Get the activation script path for the virtual environment
+        corresponding to the current directory name.
+        """
+        current_dir = os.path.basename(os.getcwd()).lower()
+
+        if current_dir not in self.envs:
+            print(f"No environment found for the current directory '{current_dir}'.")
+            return None
+
+        env_dir = self.envs[current_dir]
+        activate_script = os.path.join(env_dir, 'Scripts', 'activate') if os.name == 'nt' else os.path.join(env_dir, 'bin', 'activate')
+
+        if not os.path.exists(activate_script):
+            print(f"Activation script not found for environment '{current_dir}'.")
+            return None
+
+        return print(activate_script)
+
     def load_envs(self):
         """Load environments from a JSON file."""
         if os.path.exists(self.envs_file):

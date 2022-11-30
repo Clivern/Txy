@@ -28,6 +28,7 @@ from txy.command import (
     ListCommand,
     InfoCommand,
     RemoveCommand,
+    CurrentCommand,
 )
 
 
@@ -53,6 +54,11 @@ def info(name):
 @main.command(help="Get a list of virtual environments")
 def list():
     ListCommand().run()
+
+
+@main.command(help="Get a current virtual environment activate path")
+def current():
+    CurrentCommand().run()
 
 
 @main.command(help="Remove a virtual environment")

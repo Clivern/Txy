@@ -25,3 +25,4 @@ from .list import ListCommand
 from .activate import ActivateCommand
 from .info import InfoCommand
 from .remove import RemoveCommand
+from .current import CurrentCommand

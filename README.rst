@@ -46,3 +46,10 @@ To use txy, follow the following steps:
 .. code-block::
 
     $ txy remove project01
+
+
+6. Load current project environment
+
+.. code-block::
+
+    $ source $(txy current)
