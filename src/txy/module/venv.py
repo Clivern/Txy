@@ -24,6 +24,7 @@ import os
 import json
 import subprocess
 import shutil
+import sys
 
 
 class Venv:
@@ -79,7 +80,7 @@ class Venv:
             return
 
         env_dir = os.path.join(self.base_dir, name)
-        subprocess.run(['python', '-m', 'venv', env_dir])
+        subprocess.run([sys.executable, '-m', 'venv', env_dir])
         self.envs[name] = env_dir
         self.save_envs()
         print(f"Environment '{name}' created at {env_dir}.")
