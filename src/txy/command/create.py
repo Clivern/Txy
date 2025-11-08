@@ -24,7 +24,6 @@ from txy.module import Venv
 
 
 class CreateCommand:
-
     def __init__(self):
         self._venv = Venv()
 

@@ -30,9 +30,9 @@ import sys
 class Venv:
     """Virtual Environment Manager"""
 
-    def __init__(self, base_dir='~/.venvs'):
+    def __init__(self, base_dir="~/.venvs"):
         self.base_dir = os.path.expanduser(base_dir)
-        self.envs_file = os.path.join(self.base_dir, 'envs.json')
+        self.envs_file = os.path.join(self.base_dir, "envs.json")
         self.create_base_dir()
         self.envs = self.load_envs()
 
@@ -53,7 +53,11 @@ class Venv:
             return None
 
         env_dir = self.envs[current_dir]
-        activate_script = os.path.join(env_dir, 'Scripts', 'activate') if os.name == 'nt' else os.path.join(env_dir, 'bin', 'activate')
+        activate_script = (
+            os.path.join(env_dir, "Scripts", "activate")
+            if os.name == "nt"
+            else os.path.join(env_dir, "bin", "activate")
+        )
 
         if not os.path.exists(activate_script):
             print(f"Activation script not found for environment '{current_dir}'.")
@@ -64,13 +68,13 @@ class Venv:
     def load_envs(self):
         """Load environments from a JSON file."""
         if os.path.exists(self.envs_file):
-            with open(self.envs_file, 'r') as f:
+            with open(self.envs_file, "r") as f:
                 return json.load(f)
         return {}
 
     def save_envs(self):
         """Save environments to a JSON file."""
-        with open(self.envs_file, 'w') as f:
+        with open(self.envs_file, "w") as f:
             json.dump(self.envs, f)
 
     def create_env(self, name):
@@ -80,7 +84,7 @@ class Venv:
             return
 
         env_dir = os.path.join(self.base_dir, name)
-        subprocess.run([sys.executable, '-m', 'venv', env_dir])
+        subprocess.run([sys.executable, "-m", "venv", env_dir])
         self.envs[name] = env_dir
         self.save_envs()
         print(f"Environment '{name}' created at {env_dir}.")
@@ -92,10 +96,14 @@ class Venv:
             return
 
         env_dir = self.envs[name]
-        activate_script = os.path.join(env_dir, 'Scripts', 'activate') if os.name == 'nt' else os.path.join(env_dir, 'bin', 'activate')
+        activate_script = (
+            os.path.join(env_dir, "Scripts", "activate")
+            if os.name == "nt"
+            else os.path.join(env_dir, "bin", "activate")
+        )
 
         print(f"To activate the environment '{name}', run:")
-        print(f"source {activate_script}" if os.name != 'nt' else f"{activate_script}")
+        print(f"source {activate_script}" if os.name != "nt" else f"{activate_script}")
 
     def list_envs(self):
         """List all available virtual environments."""
@@ -130,7 +138,13 @@ class Venv:
             return
 
         env_dir = self.envs[name]
-        activate_script = os.path.join(env_dir, 'Scripts', 'activate') if os.name == 'nt' else os.path.join(env_dir, 'bin', 'activate')
+        activate_script = (
+            os.path.join(env_dir, "Scripts", "activate")
+            if os.name == "nt"
+            else os.path.join(env_dir, "bin", "activate")
+        )
 
         print(f"Information for environment '{name}':")
-        print(f"- Activation command: {'source ' + activate_script if os.name != 'nt' else activate_script}")
+        print(
+            f"- Activation command: {'source ' + activate_script if os.name != 'nt' else activate_script}"
+        )

@@ -24,7 +24,6 @@ from txy.module import Venv
 
 
 class ListCommand:
-
     def __init__(self):
         self._venv = Venv()
 

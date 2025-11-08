@@ -24,9 +24,8 @@ from txy.module import Venv
 
 
 class ActivateCommand:
+    def __init__(self):
+        self._venv = Venv()
 
-	def __init__(self):
-		self._venv = Venv()
-
-	def run(self, name):
-		self._venv.activate_env(name)
+    def run(self, name):
+        self._venv.activate_env(name)
